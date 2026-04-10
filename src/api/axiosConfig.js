@@ -6,7 +6,6 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// 🔐 Attach token
 api.interceptors.request.use((config) => {
   const token = Cookies.get(process.env.REACT_APP_SECRET_TOKEN);
   if (token) {

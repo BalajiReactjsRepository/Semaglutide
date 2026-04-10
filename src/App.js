@@ -27,9 +27,9 @@ const App = () => {
         <Route path='login' element={<Login />} />
         <Route
           element={
-            // <ProtectedRoute>
-            <MainLayout />
-            // </ProtectedRoute>
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to='dashboard' />} />

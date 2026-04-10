@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import styles from "./PatientDetails.module.css";
 import Card from "react-bootstrap/Card";
@@ -9,10 +9,43 @@ import { FaBowlFood } from "react-icons/fa6";
 import { IoIosWarning } from "react-icons/io";
 import { CgPill } from "react-icons/cg";
 import PrescriptionModal from "./PrescriptionModal";
+import { apiCaller } from "../../api/apiCaller";
+import api from "../../api/axiosConfig";
+import Loader from "../../utils/Loader";
+import { onErrorHandler } from "../../utils/ErrorHandler";
+import { ENDPOINTS } from "../../api/endpoints";
 
 const PersonalDetails = () => {
+  const [patientData, setPatientData] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { id } = useOutletContext();
-  console.log(id, "personal");
+
+  useEffect(() => {
+    if (!id) return;
+
+    apiCaller({
+      apiCall: () => api.get(ENDPOINTS.GET_PATIENT_DETAILS(id)),
+
+      onSuccess: (data) => {
+        setPatientData(data);
+      },
+
+      onError: (err) => {
+        onErrorHandler(err);
+      },
+
+      setLoading,
+    });
+  }, [id]);
+
+  if (loading && !patientData) {
+    return (
+      <div className='vh-100 d-flex align-items-center justify-content-center'>
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className='row '>
       <div className='col-sm-12'>

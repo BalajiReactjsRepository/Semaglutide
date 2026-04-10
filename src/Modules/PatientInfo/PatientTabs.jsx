@@ -1,16 +1,25 @@
 import React from "react";
 import { Container, Nav } from "react-bootstrap";
-import { NavLink, Outlet, useParams } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
 import styles from "./PatientDetails.module.css";
 import { FaUser } from "react-icons/fa";
 import blood from "../../Assets/blood.png";
 import pill from "../../Assets/pill.png";
 import track from "../../Assets/track.png";
+import { RiArrowLeftLongLine } from "react-icons/ri";
 
 const PatientTabs = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   return (
     <Container>
+      <h5 className='d-flex align-items-center mt-4'>
+        <RiArrowLeftLongLine
+          onClick={() => navigate("/dashboard")}
+          className={`me-1 ${styles.cursor}`}
+        />
+        Patient Record
+      </h5>
       <Nav variant='pills' className='mt-4 gap-3'>
         <Nav.Item>
           <NavLink

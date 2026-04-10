@@ -7,7 +7,7 @@ import logo from "../../Assets/Logo.png";
 import { apiCaller } from "../../api/apiCaller";
 import api from "../../api/axiosConfig";
 import { ENDPOINTS } from "../../api/endpoints";
-import { onErrorHandle } from "../../utils/ErrorHandler";
+import { onErrorHandler } from "../../utils/ErrorHandler";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
@@ -23,7 +23,7 @@ const Login = () => {
       .required("User ID is required"),
 
     password: Yup.string()
-      .matches(/^\d+$/, "Password must contain only digits")
+      .matches(/^\S*$/, "Spaces are not allowed")
       .required("Password is required"),
   });
 
@@ -34,14 +34,14 @@ const Login = () => {
     },
     validationSchema,
 
-    onSubmit: (values) => {
+    onSubmit: (initialValues) => {
       apiCaller({
-        apiCall: () => api.post(ENDPOINTS.LOGIN, values),
+        apiCall: () => api.post(ENDPOINTS.LOGIN, initialValues),
         setLoading,
         onSuccess: (data) => {
           console.log("Success:", data);
 
-          const token = data?.token || data?.accessToken;
+          const token = data?.token;
 
           if (token) {
             Cookies.set(process.env.REACT_APP_SECRET_TOKEN, token, {
@@ -52,7 +52,7 @@ const Login = () => {
           navigate("/dashboard");
         },
         onError: (err) => {
-          onErrorHandle(err);
+          onErrorHandler(err);
         },
       });
     },
@@ -81,6 +81,7 @@ const Login = () => {
               }
               onBlur={formik.handleBlur}
               isInvalid={formik.touched.userId && !!formik.errors.userId}
+              maxLength={20}
             />
             <Form.Control.Feedback type='invalid'>
               {formik.errors.userId}
@@ -97,24 +98,24 @@ const Login = () => {
                 placeholder='Enter Password'
                 value={formik.values.password}
                 onChange={(e) =>
-                  formik.setFieldValue(
-                    "password",
-                    e.target.value.replace(/\D/g, ""),
-                  )
+                  formik.setFieldValue("password", e.target.value)
                 }
-                onPaste={(e) => {
-                  if (/\D/.test(e.clipboardData.getData("text")))
-                    e.preventDefault();
-                }}
                 onBlur={formik.handleBlur}
                 isInvalid={formik.touched.password && !!formik.errors.password}
+                maxLength={20}
               />
 
               <Button
                 type='button'
-                variant='secondary'
+                className='border-0 text-secondary fw-normal'
                 onClick={() => setShowPassword(!showPassword)}
-                style={{ position: "absolute", right: 0, top: 0 }}
+                style={{
+                  background: "transparent",
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                  fontSize: "12px",
+                }}
               >
                 {showPassword ? "Hide" : "Show"}
               </Button>

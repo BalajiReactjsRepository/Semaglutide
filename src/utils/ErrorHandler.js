@@ -12,7 +12,7 @@ export const onSuccess = ({ message = "" }) => {
   });
 };
 
-export const onErrorHandle = (error) => {
+export const onErrorHandler = (error) => {
   const status = error?.response?.status;
   const authErrors = [401, 408, 440];
 
@@ -26,10 +26,9 @@ export const onErrorHandle = (error) => {
     }
 
     setTimeout(() => {
-      window.location.replace("/safog");
+      window.location.replace("/login");
     }, 1000);
 
-    // window.location.replace("/safog");
     return;
   }
 

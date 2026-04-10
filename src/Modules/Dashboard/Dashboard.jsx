@@ -1,137 +1,158 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import Card from "react-bootstrap/Card";
 import styles from "./Dashboard.module.css";
 import Container from "react-bootstrap/esm/Container";
 import { useNavigate } from "react-router-dom";
 import { BsBagPlusFill } from "react-icons/bs";
+import { apiCaller } from "../../api/apiCaller";
+import api from "../../api/axiosConfig";
+import { ENDPOINTS } from "../../api/endpoints";
+import Loader from "../../utils/Loader";
 
 const Dashboard = () => {
-  const [data] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      age: 30,
-      gender: "Male",
-      disease: "Hypertension",
-      status: "Active",
-      last_visit: "2026-03-10",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      age: 28,
-      gender: "Female",
-      disease: "PCOS",
-      status: "Under Treatment",
-      last_visit: "2026-03-08",
-    },
-    {
-      id: 3,
-      name: "Rahul Sharma",
-      age: 45,
-      gender: "Male",
-      disease: "Diabetes",
-      status: "Critical",
-      last_visit: "2026-03-12",
-    },
-    {
-      id: 4,
-      name: "Anjali Reddy",
-      age: 35,
-      gender: "Female",
-      disease: "Thyroid Disorder",
-      status: "Stable",
-      last_visit: "2026-03-05",
-    },
-    {
-      id: 5,
-      name: "Vikram Patel",
-      age: 50,
-      gender: "Male",
-      disease: "Cardiac Issues",
-      status: "Under Observation",
-      last_visit: "2026-03-11",
-    },
-    {
-      id: 6,
-      name: "Sneha Gupta",
-      age: 26,
-      gender: "Female",
-      disease: "Anemia",
-      status: "Recovered",
-      last_visit: "2026-02-28",
-    },
-    {
-      id: 7,
-      name: "Arjun Verma",
-      age: 40,
-      gender: "Male",
-      disease: "Asthma",
-      status: "Active",
-      last_visit: "2026-03-09",
-    },
-    {
-      id: 8,
-      name: "Pooja Nair",
-      age: 32,
-      gender: "Female",
-      disease: "Migraine",
-      status: "Stable",
-      last_visit: "2026-03-07",
-    },
-    {
-      id: 9,
-      name: "Pooja Nair",
-      age: 32,
-      gender: "Female",
-      disease: "Migraine",
-      status: "Stable",
-      last_visit: "2026-03-07",
-    },
-    {
-      id: 10,
-      name: "Pooja Nair",
-      age: 32,
-      gender: "Female",
-      disease: "Migraine",
-      status: "Stable",
-      last_visit: "2026-03-07",
-    },
-    {
-      id: 11,
-      name: "Pooja Nair",
-      age: 32,
-      gender: "Female",
-      disease: "Migraine",
-      status: "Stable",
-      last_visit: "2026-03-07",
-    },
-    {
-      id: 12,
-      name: "Pooja Nair",
-      age: 32,
-      gender: "Female",
-      disease: "Migraine",
-      status: "Stable",
-      last_visit: "2026-03-07",
-    },
-    {
-      id: 13,
-      name: "Pooja Nair",
-      age: 32,
-      gender: "Female",
-      disease: "Migraine",
-      status: "Stable",
-      last_visit: "2026-03-07",
-    },
-  ]);
-
-  const [loading] = useState(false);
+  // const [data] = useState([
+  //   {
+  //     id: 1,
+  //     name: "John Doe",
+  //     age: 30,
+  //     gender: "Male",
+  //     disease: "Hypertension",
+  //     status: "Active",
+  //     last_visit: "2026-03-10",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Jane Smith",
+  //     age: 28,
+  //     gender: "Female",
+  //     disease: "PCOS",
+  //     status: "Under Treatment",
+  //     last_visit: "2026-03-08",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Rahul Sharma",
+  //     age: 45,
+  //     gender: "Male",
+  //     disease: "Diabetes",
+  //     status: "Critical",
+  //     last_visit: "2026-03-12",
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Anjali Reddy",
+  //     age: 35,
+  //     gender: "Female",
+  //     disease: "Thyroid Disorder",
+  //     status: "Stable",
+  //     last_visit: "2026-03-05",
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "Vikram Patel",
+  //     age: 50,
+  //     gender: "Male",
+  //     disease: "Cardiac Issues",
+  //     status: "Under Observation",
+  //     last_visit: "2026-03-11",
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "Sneha Gupta",
+  //     age: 26,
+  //     gender: "Female",
+  //     disease: "Anemia",
+  //     status: "Recovered",
+  //     last_visit: "2026-02-28",
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "Arjun Verma",
+  //     age: 40,
+  //     gender: "Male",
+  //     disease: "Asthma",
+  //     status: "Active",
+  //     last_visit: "2026-03-09",
+  //   },
+  //   {
+  //     id: 8,
+  //     name: "Pooja Nair",
+  //     age: 32,
+  //     gender: "Female",
+  //     disease: "Migraine",
+  //     status: "Stable",
+  //     last_visit: "2026-03-07",
+  //   },
+  //   {
+  //     id: 9,
+  //     name: "Pooja Nair",
+  //     age: 32,
+  //     gender: "Female",
+  //     disease: "Migraine",
+  //     status: "Stable",
+  //     last_visit: "2026-03-07",
+  //   },
+  //   {
+  //     id: 10,
+  //     name: "Pooja Nair",
+  //     age: 32,
+  //     gender: "Female",
+  //     disease: "Migraine",
+  //     status: "Stable",
+  //     last_visit: "2026-03-07",
+  //   },
+  //   {
+  //     id: 11,
+  //     name: "Pooja Nair",
+  //     age: 32,
+  //     gender: "Female",
+  //     disease: "Migraine",
+  //     status: "Stable",
+  //     last_visit: "2026-03-07",
+  //   },
+  //   {
+  //     id: 12,
+  //     name: "Pooja Nair",
+  //     age: 32,
+  //     gender: "Female",
+  //     disease: "Migraine",
+  //     status: "Stable",
+  //     last_visit: "2026-03-07",
+  //   },
+  //   {
+  //     id: 13,
+  //     name: "Pooja Nair",
+  //     age: 32,
+  //     gender: "Female",
+  //     disease: "Migraine",
+  //     status: "Stable",
+  //     last_visit: "2026-03-07",
+  //   },
+  // ]);
+  const [patientsData, setPatientsData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [totalRows] = useState(2);
   const [perPage, setPerPage] = useState(8);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    apiCaller({
+      apiCall: () => api.get(ENDPOINTS.GET_PATIENTS),
+
+      onSuccess: (data) => {
+        console.log("Health Data:", data);
+        setPatientsData(data);
+      },
+
+      onError: (err) => {
+        console.error("Error fetching health data", err);
+      },
+
+      setLoading,
+    });
+  }, []);
 
   const handleView = (id) => {
     navigate(`/patient-info/${id}`);
@@ -224,8 +245,9 @@ const Dashboard = () => {
         <div className={styles.tablemodule}>
           <DataTable
             columns={columns}
-            data={data}
+            data={patientsData}
             progressPending={loading}
+            progressComponent={<Loader />}
             pagination
             paginationServer={false}
             paginationTotalRows={totalRows}

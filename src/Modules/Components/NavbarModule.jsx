@@ -6,9 +6,17 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { BsPersonCircle } from "react-icons/bs";
 import logo from "../../Assets/Logo.png";
 import styles from "./Components.module.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const NavbarModule = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    Cookies.remove(process.env.REACT_APP_SECRET_TOKEN);
+    navigate("/login");
+  };
+
   return (
     <div>
       <Navbar expand='lg' className='shadow-sm bg-white'>
@@ -31,7 +39,9 @@ const NavbarModule = () => {
                 <NavDropdown.Item href='#action/3.1'>
                   Change password
                 </NavDropdown.Item>
-                <NavDropdown.Item href='#action/3.2'>Logout</NavDropdown.Item>
+                <NavDropdown.Item onClick={handleLogout}>
+                  Logout
+                </NavDropdown.Item>
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>
