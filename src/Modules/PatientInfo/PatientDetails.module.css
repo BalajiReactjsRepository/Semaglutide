@@ -1,0 +1,46 @@
+.custNavLink {
+  background-color: transparent !important;
+  color: #171717 !important;
+  border: 1px solid #c5ecfd !important;
+  font-weight: 500;
+  min-height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  min-width: 10.4rem;
+}
+.isActive {
+  background-color: #c5ecfd !important;
+  color: #171717 !important;
+  border: none !important;
+  transition: all 0.3s;
+  min-width: 10.4rem;
+}
+.icon {
+  width: 1.8rem;
+}
+.customCard {
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+}
+.customBtn {
+  background-color: transparent !important;
+  border: none !important;
+  text-decoration: underline !important;
+  color: blue !important;
+}
+.metricCard {
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  border: 1px solid #c5ecfd;
+}
+.metricIcon {
+  width: 1.4rem;
+  margin-right: 0.4rem;
+}
