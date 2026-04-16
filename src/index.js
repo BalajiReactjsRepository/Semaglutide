@@ -6,15 +6,18 @@ import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter } from "react-router-dom";
 import ErrorBoundary from "./ErrorBoundary";
-import ErrorFallback from "./ErrorFallback";
+import { ErrorFallback } from "./ErrorFallback";
+import { Context } from "./store/Context";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ErrorBoundary fallback={<ErrorFallback />}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <Context>
+        <BrowserRouter basename='/glyxlyf'>
+          <App />
+        </BrowserRouter>
+      </Context>
     </ErrorBoundary>
   </React.StrictMode>,
 );

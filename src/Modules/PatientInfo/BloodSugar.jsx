@@ -1,63 +1,60 @@
-import React, { useEffect, useState } from "react";
-import { Card } from "react-bootstrap";
-import { useOutletContext } from "react-router-dom";
-import blood from "../../Assets/blood.png";
-import styles from "./PatientDetails.module.css";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { apiCaller } from "../../api/apiCaller";
 import api from "../../api/axiosConfig";
-import Loader from "../../utils/Loader";
 import { onErrorHandler } from "../../utils/ErrorHandler";
 import { ENDPOINTS } from "../../api/endpoints";
-
+import { useStore } from "../../store/Context";
+import AccordionComponentTwo from "../Components/AccordionComponentTwo";
+import Loader from "../../utils/Loader";
 const BloodSugar = () => {
-  const [bloodSugarData, setBloodSugarData] = useState(null);
+  const [bloodSugarData, setBloodSugarData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const { id } = useOutletContext();
+  const { period } = useStore();
 
-  useEffect(() => {
+  const navigate = useNavigate();
+
+  const fetchData = useCallback(() => {
     if (!id) return;
-
     apiCaller({
-      apiCall: () => api.get(ENDPOINTS.GET_PATIENT_BLOOD_SUGAR(id)),
+      apiCall: () =>
+        api.post(ENDPOINTS.GET_PATIENT_BLOOD_SUGAR, {
+          patientId: id,
+          timePeriod: period,
+        }),
 
       onSuccess: (data) => {
-        setBloodSugarData(data);
+        setBloodSugarData(data?.result || []);
       },
 
       onError: (err) => {
-        onErrorHandler(err);
+        onErrorHandler(err, navigate);
       },
 
       setLoading,
     });
-  }, [id]);
+  }, [id, period, navigate]);
 
-  if (loading && !bloodSugarData) {
-    return (
-      <div className='vh-100 d-flex align-items-center justify-content-center'>
-        <Loader />
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (id) fetchData();
+  }, [fetchData, id]);
 
   return (
-    <Card body className='mt-5 w-25'>
-      <div className='d-flex justify-content-between align-items-center mb-2'>
-        <h6 className='mb-0'>
-          {" "}
-          <img src={blood} alt='icon' className={styles.icon} /> Blood Sugar
-        </h6>
-        <span className='badge bg-success'>Normal</span>
-      </div>
-
-      <p className='when-text'>Before Meal</p>
-
-      <h1 className='bs-value'>120</h1>
-      <p className='unit'>mg/dL</p>
-
-      <small className='text-muted'>Ideal: 70–100 (fasting)</small>
-    </Card>
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className='mt-5 text-center'>
+          {bloodSugarData?.length > 0 ? (
+            <AccordionComponentTwo data={bloodSugarData} />
+          ) : (
+            "No data found"
+          )}
+        </div>
+      )}
+    </>
   );
 };
 

@@ -1,9 +1,10 @@
 import React from "react";
+import { ErrorFallback } from "./ErrorFallback";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, key: 0 };
   }
 
   static getDerivedStateFromError(error) {
@@ -12,14 +13,25 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error("Error caught:", error, errorInfo);
+    this.setState({ errorInfo });
   }
+
+  handleReset = () => {
+    this.setState((prev) => ({
+      hasError: false,
+      error: null,
+      key: prev.key + 1,
+    }));
+  };
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback || <h3>Something went wrong</h3>;
+      return (
+        <ErrorFallback error={this.state.error} reset={this.handleReset} />
+      );
     }
 
-    return this.props.children;
+    return <div key={this.state.key}>{this.props.children}</div>;
   }
 }
 

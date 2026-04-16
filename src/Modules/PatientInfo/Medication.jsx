@@ -1,109 +1,148 @@
-import React, { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
-import DataTable from "react-data-table-component";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { apiCaller } from "../../api/apiCaller";
 import api from "../../api/axiosConfig";
-import Loader from "../../utils/Loader";
 import { onErrorHandler } from "../../utils/ErrorHandler";
+import DatatableComponent from "../Components/DatatableComponent";
 import { ENDPOINTS } from "../../api/endpoints";
+import { customStyles } from "../../utils/CustomStyle";
 
 const Medication = () => {
   const [medicationData, setMedicationData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [totalRows] = useState(2);
-  const [perPage, setPerPage] = useState(8);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
 
   const { id } = useOutletContext();
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     if (!id) return;
 
     apiCaller({
-      apiCall: () => api.get(ENDPOINTS.GET_PATIENT_MEDICATION(id)),
+      apiCall: () =>
+        api.post(
+          ENDPOINTS.GET_PATIENT_MEDICATION,
+          { patientId: id },
+          {
+            params: {
+              page,
+              limit: perPage,
+            },
+          },
+        ),
 
       onSuccess: (data) => {
-        setMedicationData(data);
+        console.log(data);
+        const { medications, meta } = data?.result || {};
+        setMedicationData(medications ?? []);
+        setTotalRecords(meta?.totalRecords ?? 0);
       },
 
       onError: (err) => {
-        onErrorHandler(err);
+        onErrorHandler(err, navigate);
       },
 
       setLoading,
     });
-  }, [id]);
+  }, [id, page, perPage, navigate]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const columns = [
     {
-      name: "ID",
-      selector: (row) => row.id,
+      name: "S.No",
+      cell: (row, index) => (page - 1) * perPage + index + 1,
+      width: "60px",
     },
     {
       name: "Name",
-      selector: (row) => row.name,
+      selector: (row) => row.medication_name || "NA",
+      width: "160px",
     },
     {
       name: "Dosage",
-      selector: (row) => row.dosage,
+      selector: (row) => row.dosage_strength_mg || "NA",
     },
     {
-      name: "Type",
-      selector: (row) => row.type,
+      name: "Medication type",
+      selector: (row) => row.medication_type || "NA",
+      width: "180px",
     },
     {
-      name: "Status",
-      selector: (row) => row.status,
+      name: "Start date",
+      selector: (row) => row.start_date || "NA",
+      width: "140px",
+    },
+    {
+      name: "Injection site",
+      cell: (row) => (
+        <span title={row.injection_site}>
+          {row.injection_site
+            ? row.injection_site.length > 10
+              ? row.injection_site.substring(0, 10) + "..."
+              : row.injection_site
+            : "NA"}
+        </span>
+      ),
+      width: "160px",
+    },
+    {
+      name: "Frequency",
+      selector: (row) => row.frequency_days || "NA",
+      width: "160px",
+    },
+    {
+      name: "Note",
+      cell: (row) => (
+        <span title={row.medication_note}>
+          {row.medication_note
+            ? row.medication_note.length > 10
+              ? row.medication_note.substring(0, 10) + "..."
+              : row.medication_note
+            : "NA"}
+        </span>
+      ),
+      width: "120px",
+    },
+    {
+      name: "Purpose",
+      cell: (row) => (
+        <span title={row.purpose}>
+          {row.purpose
+            ? row.purpose.length > 10
+              ? row.purpose.substring(0, 10) + "..."
+              : row.purpose
+            : "NA"}
+        </span>
+      ),
+      width: "120px",
+    },
+    {
+      name: "Pain level",
+      selector: (row) => row.pain_level || "NA",
+      width: "160px",
     },
   ];
 
-  const customStyles = {
-    table: {
-      style: {
-        border: "1px solid #e5e7eb",
-        borderRadius: "12px",
-        overflow: "hidden",
-      },
-    },
-    headRow: {
-      style: {
-        backgroundColor: "#b7e0f7",
-        fontWeight: "600",
-        fontSize: "14px",
-        minHeight: "40px",
-      },
-    },
-    rows: {
-      style: {
-        minHeight: "36px",
-        "&:hover": {
-          backgroundColor: "#f9fafb",
-          cursor: "pointer",
-        },
-      },
-    },
-    cells: {
-      style: {
-        fontSize: "14px",
-      },
-    },
-  };
-
   return (
-    <div className='mt-5'>
-      <DataTable
+    <div className='mt-4'>
+      <DatatableComponent
         columns={columns}
         data={medicationData}
-        progressPending={loading}
-        progressComponent={<Loader />}
-        pagination
-        paginationServer={false}
-        paginationTotalRows={totalRows}
-        paginationPerPage={perPage}
-        onChangePage={(page) => console.log("Page:", page)}
-        onChangeRowsPerPage={(newPerPage) => setPerPage(newPerPage)}
-        noDataComponent={<div>No Data Available</div>}
-        fixedHeader
+        loading={loading}
         customStyles={customStyles}
+        innerTable={true}
+        totalRows={totalRecords}
+        perPage={perPage}
+        onChangePage={(page) => setPage(page)}
+        onChangeRowsPerPage={(newPerPage, page) => {
+          setPerPage(newPerPage);
+          setPage(1);
+        }}
       />
     </div>
   );

@@ -10,12 +10,14 @@ import { ENDPOINTS } from "../../api/endpoints";
 import { onErrorHandler } from "../../utils/ErrorHandler";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { useStore } from "../../store/Context";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { setDoctorDetails } = useStore();
 
   const validationSchema = Yup.object({
     userId: Yup.string()
@@ -39,20 +41,23 @@ const Login = () => {
         apiCall: () => api.post(ENDPOINTS.LOGIN, initialValues),
         setLoading,
         onSuccess: (data) => {
-          console.log("Success:", data);
-
-          const token = data?.token;
-
+          const token = data?.result?.accessToken;
+          const { doctorDetails } = data?.result;
           if (token) {
             Cookies.set(process.env.REACT_APP_SECRET_TOKEN, token, {
               expires: 1,
             });
+            localStorage.setItem(
+              "doctorDetails",
+              JSON.stringify(doctorDetails),
+            );
+            setDoctorDetails(doctorDetails);
           }
-
-          navigate("/dashboard");
+          if (data?.statusCode === 200) navigate("/doctor-dashboard");
         },
         onError: (err) => {
-          onErrorHandler(err);
+          console.log(err);
+          onErrorHandler(err, navigate);
         },
       });
     },
@@ -113,7 +118,7 @@ const Login = () => {
                   background: "transparent",
                   position: "absolute",
                   right: 0,
-                  top: 0,
+                  top: "3px",
                   fontSize: "12px",
                 }}
               >

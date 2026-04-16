@@ -1,23 +1,15 @@
-import { useEffect } from "react";
 import Cookies from "js-cookie";
-import { useNavigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = (props) => {
-  const tokenKey = process.env.REACT_APP_SECRET_TOKEN;
+const ProtectedRoute = ({ children }) => {
+  const tokenKey = process.env.REACT_APP_SECRET_TOKEN || "token";
   const jwtToken = Cookies.get(tokenKey);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!jwtToken) {
-      navigate("/login");
-    }
-  }, [jwtToken, navigate]);
 
   if (!jwtToken) {
-    return null;
+    return <Navigate to='/login' replace />;
   }
 
-  return props.children ?? <Outlet />;
+  return children ? children : <Outlet />;
 };
 
 export default ProtectedRoute;

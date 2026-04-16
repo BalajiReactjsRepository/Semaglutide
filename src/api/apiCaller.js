@@ -11,6 +11,7 @@ export const apiCaller = async ({
 
     onSuccess && onSuccess(response.data);
   } catch (error) {
+    console.log(error);
     onError && onError(error);
   } finally {
     setLoading && setLoading(false);

@@ -21,3 +21,10 @@
   height: 100%;
   border-radius: 0 !important;
 }
+.cardBody {
+  background-image: url("../../Assets/cardiogram.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left;
+  background-position: left 20px center;
+}

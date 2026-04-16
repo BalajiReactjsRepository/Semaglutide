@@ -3,11 +3,13 @@ import Cookies from "js-cookie";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
 });
 
 api.interceptors.request.use((config) => {
-  const token = Cookies.get(process.env.REACT_APP_SECRET_TOKEN);
+  const tokenKey = process.env.REACT_APP_SECRET_TOKEN || "token";
+
+  const token = Cookies.get(tokenKey);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -19,10 +21,11 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      Cookies.remove(process.env.REACT_APP_SECRET_TOKEN);
+    console.log(error);
+    const status = error?.response?.status;
 
-      window.location.href = "/login";
+    if (status === 500) {
+      console.error("Server crashed:", error.response?.data);
     }
 
     return Promise.reject(error);

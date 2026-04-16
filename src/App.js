@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import "./App.css";
+import ChangePassword from "./Modules/Authentication/ChangePassword";
+import PublicRoute from "./utils/PublicRoute";
 
 const MainLayout = lazy(() => import("./MainLayout/Layout"));
 const Login = lazy(() => import("./Modules/Authentication/Login"));
@@ -24,7 +26,9 @@ const App = () => {
       }
     >
       <Routes>
-        <Route path='login' element={<Login />} />
+        <Route element={<PublicRoute />}>
+          <Route path='/login' element={<Login />} />
+        </Route>
         <Route
           element={
             <ProtectedRoute>
@@ -32,8 +36,8 @@ const App = () => {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate to='dashboard' />} />
-          <Route path='dashboard' element={<Dashboard />} />
+          <Route index element={<Navigate to='/doctor-dashboard' />} />
+          <Route path='/doctor-dashboard' element={<Dashboard />} />
           <Route path='/patient-info/:id' element={<PatientTabs />}>
             <Route index element={<Navigate to='personal-details' />} />
             <Route path='personal-details' element={<PersonalDetails />} />
@@ -41,6 +45,7 @@ const App = () => {
             <Route path='medication' element={<Medication />} />
             <Route path='blood-sugar' element={<BloodSugar />} />
           </Route>
+          <Route path='/change-password' element={<ChangePassword />} />
         </Route>
       </Routes>
     </Suspense>

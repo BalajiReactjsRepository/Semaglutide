@@ -1,28 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import styles from "./PatientDetails.module.css";
+import { apiCaller } from "../../api/apiCaller";
+import api from "../../api/axiosConfig";
+import { ENDPOINTS } from "../../api/endpoints";
+import { onErrorHandler } from "../../utils/ErrorHandler";
 
-const PrescriptionModal = ({ files = [] }) => {
+const PrescriptionModal = ({ patientId }) => {
+  const [prescriptionData, setPrescriptionData] = useState([]);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const handleDownload = (url) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = ""; 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  useEffect(() => {
+    if (!patientId) return;
+
+    apiCaller({
+      apiCall: () =>
+        api.post(ENDPOINTS.GET_PATIENT_PRESCRIPTIONS, {
+          patientId: patientId,
+        }),
+
+      onSuccess: (data) => {
+        const details = data?.result || {};
+        setPrescriptionData(details);
+      },
+
+      onError: (err) => {
+        onErrorHandler(err);
+      },
+    });
+  }, [patientId]);
+
+  // const handleDownload = async (url) => {
+  //   const response = await fetch(url);
+  //   const blob = await response.blob();
+
+  //   const blobUrl = window.URL.createObjectURL(blob);
+
+  //   const link = document.createElement("a");
+  //   link.href = blobUrl;
+  //   link.download = url.split("/").pop() || "file";
+
+  //   document.body.appendChild(link);
+  //   link.click();
+
+  //   document.body.removeChild(link);
+  //   window.URL.revokeObjectURL(blobUrl);
+  // };
 
   const isImage = (file) => {
-    return /\.(jpg|jpeg|png|webp)$/i.test(file);
+    const target = file?.prescription_url || file?.original_name || "";
+    return /\.(jpg|jpeg|png|webp)$/i.test(target);
   };
 
   const isPDF = (file) => {
-    return /\.pdf$/i.test(file);
+    const target = file?.prescription_url || file?.original_name || "";
+    return /\.pdf$/i.test(target);
   };
 
   return (
@@ -30,26 +65,25 @@ const PrescriptionModal = ({ files = [] }) => {
       <Button className={styles.customBtn} size='sm' onClick={handleShow}>
         View Prescription
       </Button>
-
       <Modal show={show} onHide={handleClose} centered size='lg'>
         <Modal.Header closeButton>
           <Modal.Title>Prescription Files</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          {files.length === 0 ? (
+          {prescriptionData.length === 0 ? (
             <p className='text-muted'>No files available</p>
           ) : (
             <div className='d-flex flex-wrap gap-3'>
-              {files.map((file, index) => (
+              {prescriptionData.map((file, index) => (
                 <div
                   key={index}
-                  className='border rounded p-2 text-center'
+                  className='text-center'
                   style={{ width: "150px" }}
                 >
                   {isImage(file) && (
                     <img
-                      src={file}
+                      src={file.prescription_url}
                       alt='prescription'
                       style={{
                         width: "100%",
@@ -80,18 +114,18 @@ const PrescriptionModal = ({ files = [] }) => {
                     <Button
                       size='sm'
                       variant='outline-primary'
-                      onClick={() => window.open(file, "_blank")}
+                      onClick={() => window.open(file?.prescription_url)}
                     >
                       View
                     </Button>
 
-                    <Button
+                    {/* <Button
                       size='sm'
                       variant='outline-success'
-                      onClick={() => handleDownload(file)}
+                      onClick={() => handleDownload(file?.prescription_url)}
                     >
-                      Download
-                    </Button>
+                      {file?.original_name}
+                    </Button> */}
                   </div>
                 </div>
               ))}

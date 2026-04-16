@@ -12,29 +12,42 @@ export const onSuccess = ({ message = "" }) => {
   });
 };
 
-export const onErrorHandler = (error) => {
+export const onErrorHandler = (error, navigate) => {
   const status = error?.response?.status;
   const authErrors = [401, 408, 440];
 
   if (authErrors.includes(status)) {
-    localStorage.removeItem("doctor-name");
-    localStorage.removeItem("gender-value");
-    localStorage.removeItem("submit-status");
+    Swal.fire({
+      icon: "error",
+      title: "Login Failed",
+      text: error?.response?.data?.message || "Please login again",
+    });
 
-    if (process.env.REACT_APP_TOKEN) {
-      Cookies.remove(process.env.REACT_APP_TOKEN);
+    localStorage.removeItem("doctorDetails");
+
+    if (process.env.REACT_APP_SECRET_TOKEN) {
+      Cookies.remove(process.env.REACT_APP_SECRET_TOKEN);
     }
 
     setTimeout(() => {
-      window.location.replace("/login");
-    }, 1000);
+      navigate("/login");
+    }, 1500);
 
     return;
   }
 
+  // 🔥 Other errors (400, 404, 500, etc.)
   Swal.fire({
     icon: "error",
-    title: "Oops...",
+    title:
+      status === 500
+        ? "Server Error"
+        : status === 404
+          ? "Not Found"
+          : status === 400
+            ? "Bad Request"
+            : "Error",
+
     text:
       error?.response?.data?.message ||
       error?.message ||

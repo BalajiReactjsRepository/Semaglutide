@@ -43,6 +43,135 @@
   width: 1.4rem;
   margin-right: 0.4rem;
 }
-.cursor{
+.cursor {
   cursor: pointer;
+}
+.profileIconCont {
+  background-color: #c5ecfd !important;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+}
+.IconCont {
+  background-color: #c5ecfd;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+}
+.profileIcon {
+  font-size: 2.8rem;
+}
+.profileImg {
+  width: 90px;
+  height: 90px;
+}
+/* healthcare */
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e6eaf0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  margin: 1rem 0;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e7f9ef;
+  color: #1aa36f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.date {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.status {
+  font-size: 12px;
+  color: #777;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.summary {
+  color: #555;
+  font-size: 14px;
+}
+
+.arrow {
+  font-size: 20px;
+  color: #888;
+}
+
+.cardBody {
+  background: #fafbff;
+}
+
+.logCard {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: #fff;
+  border-radius: 12px;
+  margin-top: 10px;
+  border: 1px solid #eef1f6;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.logName {
+  font-weight: 600;
+}
+
+.logRange {
+  font-size: 13px;
+  color: #555;
+}
+
+.logTime {
+  font-size: 13px;
+  color: #888;
+}
+
+@media screen and (max-width: 768px) {
+  .custNavLink {
+    gap: 0 !important;
+    min-width: 0 !important;
+  }
 }

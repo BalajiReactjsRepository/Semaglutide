@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-gutter: stable;
 }
 body {
   font-family: "Inter", sans-serif;
@@ -12,6 +13,25 @@ body {
 .navbar {
   border-bottom: 1px solid #eee;
 }
-.navbar .dropdown-toggle::after {
+/* .navbar .dropdown-toggle::after {
   display: none !important;
+}
+.rdt_Pagination select,
+.rdt_Pagination span:first-child {
+  display: none;
+}
+.rdt_Pagination div:has(select) {
+  display: none !important;
+} */
+.rdt_Pagination {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center;
+}
+.accordion-item {
+  margin: 1rem 0;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.accordion-button:focus {
+  box-shadow: none !important;
 }
